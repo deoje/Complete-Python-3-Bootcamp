@@ -3,9 +3,12 @@
 
 This program is a Tic Tac Toe game which lets the two players play on a single
 computer."""
+import art
 import sys
 
-print("**********************","| Tic    Tac    Toe! |","**********************",sep="\n")
+Art = art.text2art("*************\n"+"| Tic    Tac    Toe! |\n"+"*************\n", font="standard")
+print(Art)
+#print("**********************","| Tic    Tac    Toe! |","**********************",sep="\n")
 
 stay_in_intro = True
 while stay_in_intro:
@@ -25,6 +28,7 @@ player_2_marker = "O"
 board = {1:"1",2:"2", 3:"3",4:"4", 5:"5", 6:"6", 7:"7", 8:"8", 9:"9"}
 
 def print_board():
+    """Print the current state of the board"""
     print("\n"
         "   |   |   ",
         f" {board[7]} | {board[8]} | {board[9]} ",
@@ -40,6 +44,25 @@ def print_board():
         sep="\n"
         )
 
+def full_board_check():
+    """If board is full, then stop game"""
+    if {"X","O"} == set().union(*board.values()):
+        print(
+            "\nThe board is now full. It's a tie!",
+            "Goodbye!",
+            sep="\n"
+        )
+        sys.exit(0)
+
+def win_check(mark):
+    return ((board[7] == mark and board[8] == mark and board[9] == mark) or # across the top
+    (board[4] == mark and board[5] == mark and board[6] == mark) or # across the middle
+    (board[1] == mark and board[2] == mark and board[3] == mark) or # across the bottom
+    (board[7] == mark and board[4] == mark and board[1] == mark) or # down the left side
+    (board[8] == mark and board[5] == mark and board[2] == mark) or # down the middle
+    (board[9] == mark and board[6] == mark and board[3] == mark) or # down the right side
+    (board[7] == mark and board[5] == mark and board[3] == mark) or # diagonal
+    (board[9] == mark and board[5] == mark and board[1] == mark)) # diagonal
 
 replay = True
 while replay:
@@ -55,11 +78,18 @@ while replay:
             continue
         else:
             board[player_1_choice] = player_1_marker
-            # Verify if win
             print_board()
+            if win_check(player_1_marker) is True:
+                print("Congratulations, player 1. You have won!")
+                print_board()
+                print("Goodbye!")
+                sys.exit(0)
     else:
         print("Seems like you've entered an unvalid option. Let's try again!")
         continue
+
+    full_board_check()
+
     move_on = False
     while not move_on:
         player_2_choice = input("\nPlayer 2, choose your next position:" )
@@ -73,7 +103,11 @@ while replay:
                 print_board()
             else:
                 board[player_2_choice] = player_2_marker
-                # Verify if win
+                if win_check(player_2_marker) is True:
+                    print("Congratulations, player 2. You have won!")
+                    print_board()
+                    print("Goodbye!")
+                    sys.exit(0)
                 move_on = True
         else:
             print("Seems like you've entered an unvalid option. Let's try again!")
